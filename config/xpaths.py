@@ -1,0 +1,20 @@
+# From main page
+APARTMENTS_URLS_LIST="//div[@class='description']/h2/a[@href]/@href"
+NEXT_URL="//i[contains(@class, 'fa-angle-right')]/parent::a/@href"
+
+# From detailed page
+APARTMENT_ADDRESS = "//h1/text()"
+APARTMENT_PRICE = "//div[@class='price-outer']//div[not(@class)]/text()"
+APARTMENT_PRICE_PER_M2 = "//div[@class='price-outer']//div[not(@class)]/small/text()"
+APARTMENT_IMAGES = "//div[@class='media']//img[@data-src]/@data-src"
+APARTMENT_ROOMS = ".//tr[th='Rooms']/td/text()"
+APARTMENT_BEDROOMS = ".//tr[th='Bedrooms']/td/text()"
+APARTMENT_TOTAL_AREA = ".//tr[th='total area']/td/text()"
+APARTMENT_FLOOR = ".//tr[th='Floor/Number of floors']/td/text()"
+APARTMENT_BUILD_YEAR = ".//tr[th='Built in year']/td/text()"
+APARTMENT_CADASTRE_NR = ".//tr[th='Cadastre no.']//a/text()"
+APARTMENT_ENERGY_MARK = ".//tr[th[a='Energy mark']]/td/text()"
+APARTMENT_UTILITIES_SUMMER = ".//tr[th='Utilities summer/winter']//span[1]/text()"
+APARTMENT_UTILITIES_WINTER = ".//tr[th='Utilities summer/winter']//span[2]/text()"
+APARTMENT_OWNERSHIP_FORM = ".//tr[th='ownership form']/td/text()"
+APARTMENT_CONDITION = ".//tr[th='Condition']/td/text()"

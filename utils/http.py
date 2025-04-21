@@ -72,10 +72,6 @@ def send_request(session: requests.Session, url: str) -> Optional[requests.Respo
         )
         response.raise_for_status()
 
-        if response.content is None:
-            logging.error("Empty response content received")
-            return None
-
         logging.info(f"Request successful. Status: {response.status_code}. URL: {url}")
 
         return response
