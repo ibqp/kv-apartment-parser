@@ -6,10 +6,12 @@ log = logger.setup_logger()
 
 
 def main():
-    log.info("Application started")
+    log.info("Parser started")
 
-    scraper = KVSpider()
-    scraper.run_scraper()
+    spider = KVSpider()
+    spider.run_scraper()
+
+    log.info("Parser ended")
 
 if __name__ == "__main__":
     main()

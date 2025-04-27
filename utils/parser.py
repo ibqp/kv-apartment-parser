@@ -6,11 +6,14 @@ from requests.adapters import Response
 
 def parse_html(response: Response) -> Optional[html.HtmlElement]:
     try:
-        parsed_html = html.fromstring(response.content)
+        logging.debug(f"Parsing HTML from received response. Response URL: {response.url}")
+        decoded_content = response.content.decode('utf-8', errors='ignore')
+        parsed_html = html.fromstring(decoded_content)
         if len(parsed_html) == 0:
-            logging.error("Parsed HTML is empty")
+            logging.error("Parsed HTML is empty.")
             return None
 
+        logging.debug("HTML parsed successfully.")
         return parsed_html
     except Exception as e:
         logging.error(f"Failed to parse HTML: {e}")
@@ -18,12 +21,14 @@ def parse_html(response: Response) -> Optional[html.HtmlElement]:
 
 def extract_element(element: html.HtmlElement, xpath: str) -> Optional[List[str]]:
     try:
+        logging.debug(f"Extracting elements using xpath: {xpath}")
         result = element.xpath(xpath)
         if len(result) == 0:
-            logging.error("No elements found")
+            logging.debug("No elements found.")
             return None
 
+        logging.debug("Elements extracted successfully.")
         return [str(item).strip() for item in result]
     except Exception as e:
-        logging.error(f"Failed to extract element: {e}")
+        logging.error(f"Failed to extract elements: {e}")
         return None

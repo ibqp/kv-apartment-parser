@@ -10,8 +10,8 @@ LOGS_DIR = ROOT_DIR / 'logs'
 LOGS_DIR.mkdir(exist_ok=True)
 
 # Logging settings
-LOG_LEVEL = logging.DEBUG
-LOG_FORMAT = '%(asctime)s - [%(levelname)s] - [%(filename)s:%(lineno)d] - %(message)s'
+LOG_LEVEL = logging.INFO
+LOG_FORMAT = '%(asctime)s - [%(levelname)s] - %(message)s -> (%(filename)s:%(funcName)s:%(lineno)d)'
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 MAX_LOG_FILES = 5 # max log files we want to keep
 
@@ -29,7 +29,6 @@ def cleanup_logs():
             old_log.unlink() # delete log
     except Exception as e:
         print(f"Error during log cleanup: {e}")
-
 
 def setup_logger():
     """Setup logger with file and console handlers."""

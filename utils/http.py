@@ -10,7 +10,7 @@ from urllib.parse import urlparse, urljoin
 
 # HTTP Settings
 REQUEST_TIMEOUT = 30
-MAX_RETRIES = 5
+MAX_RETRIES = 3
 BACKOFF_FACTOR = 1.3
 RETRY_STATUS_CODES = [403, 408, 429, 500, 502, 503, 504]
 DELAY_MIN = 2.0
@@ -47,22 +47,25 @@ def create_session() -> requests.Session:
     # Return session with configured retry strategy
     return session
 
-
 def get_initial_url() -> str:
     default_url = f"{BASE_URL}/en/search?deal_type=1"
-    url = input(f"Enter the URL (default: {default_url}): ").strip()
+    url = input(f"Enter initial URL (default: {default_url}): ").strip()
     parsed = urlparse(url)
     return url if (parsed.scheme and parsed.netloc) else default_url
-
 
 def generate_url(relative_url: str) -> str:
     url = urljoin(BASE_URL, relative_url)
     logging.debug(f"Generated URL from relative URL: {url}")
     return url
 
+def delay():
+    delay = random.uniform(DELAY_MIN, DELAY_MAX) + random.uniform(0.1, 1.0) # jitter
+    logging.debug(f"Sleeping {delay:.2f} seconds.")
+    time.sleep(delay)
 
 def send_request(session: requests.Session, url: str) -> Optional[requests.Response]:
     try:
+        logging.debug(f"Requesting from: {url}")
         # Send request to provided url
         response = session.get(
             url=url
@@ -72,15 +75,8 @@ def send_request(session: requests.Session, url: str) -> Optional[requests.Respo
         )
         response.raise_for_status()
 
-        logging.info(f"Request successful. Status: {response.status_code}. URL: {url}")
-
+        logging.debug(f"Request successful. Response received with status: {response.status_code}.")
         return response
     except requests.RequestException as e:
-        logging.error(f"Request failed. Error: {e}")
+        logging.error(f"Request failed. Error: {e}. URL: {url}")
         return None
-
-
-def delay():
-    delay = random.uniform(DELAY_MIN, DELAY_MAX) + random.uniform(0.1, 1.0) # jitter
-    logging.info(f"Sleeping for {delay:.2f} seconds before next request...")
-    time.sleep(delay)
