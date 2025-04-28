@@ -1,8 +1,9 @@
 import logging
 from lxml import html
+from utils import http
 from config import xpaths
 from typing import Optional
-from utils import http, parser
+from utils.parser import Parser
 
 
 class KVSpider:
@@ -67,40 +68,9 @@ class KVSpider:
                 logging.error(f"Failed to fetch apartment page: {apartment_full_url}")
                 return False
 
-            # Extract data
-            apartment_address = parser.extract_element(apartment_html, xpaths.APARTMENT_ADDRESS)
-            apartment_price = parser.extract_element(apartment_html, xpaths.APARTMENT_PRICE)
-            apartment_price_per_m2 = parser.extract_element(apartment_html, xpaths.APARTMENT_PRICE_PER_M2)
-            apartment_images = parser.extract_element(apartment_html, xpaths.APARTMENT_IMAGES)
-            apartment_rooms = parser.extract_element(apartment_html, xpaths.APARTMENT_ROOMS)
-            apartment_bedrooms = parser.extract_element(apartment_html, xpaths.APARTMENT_BEDROOMS)
-            apartment_total_area = parser.extract_element(apartment_html, xpaths.APARTMENT_TOTAL_AREA)
-            apartment_floor = parser.extract_element(apartment_html, xpaths.APARTMENT_FLOOR)
-            apartment_build_year = parser.extract_element(apartment_html, xpaths.APARTMENT_BUILD_YEAR)
-            apartment_cadastre_nr = parser.extract_element(apartment_html, xpaths.APARTMENT_CADASTRE_NR)
-            apartment_energy_mark = parser.extract_element(apartment_html, xpaths.APARTMENT_ENERGY_MARK)
-            apartment_utilities_summer = parser.extract_element(apartment_html, xpaths.APARTMENT_UTILITIES_SUMMER)
-            apartment_utilities_winter = parser.extract_element(apartment_html, xpaths.APARTMENT_UTILITIES_WINTER)
-            apartment_ownership_form = parser.extract_element(apartment_html, xpaths.APARTMENT_OWNERSHIP_FORM)
-            apartment_condition = parser.extract_element(apartment_html, xpaths.APARTMENT_CONDITION)
-            print({
-                "url": apartment_full_url,
-                "address": apartment_address,
-                "price": apartment_price,
-                "price_per_m2": apartment_price_per_m2,
-                "images": apartment_images,
-                "rooms": apartment_rooms,
-                "bedrooms": apartment_bedrooms,
-                "total_area": apartment_total_area,
-                "floor": apartment_floor,
-                "build_year": apartment_build_year,
-                "cadastre_nr": apartment_cadastre_nr,
-                "energy_mark": apartment_energy_mark,
-                "utilities_summer": apartment_utilities_summer,
-                "utilities_winter": apartment_utilities_winter,
-                "ownership_form": apartment_ownership_form,
-                "condition": apartment_condition
-            })
+            # Extract apartment data
+            apartment = Parser.extract_apartment_data(apartment_html, apartment_full_url)
+            print(apartment)
             return True
 
         except Exception as e:
@@ -114,7 +84,7 @@ class KVSpider:
             logging.error(f"Request failed on page {page_number}: {url}")
             return None
 
-        html = parser.parse_html(response)
+        html = Parser.parse_response(response)
         if html is None:
             logging.error(f"HTML parsing failed on page {page_number}: {response.url}")
             return None
@@ -124,12 +94,12 @@ class KVSpider:
 
     def _get_apartments_urls(self, html, xpath):
         logging.debug("Looking for apartment URLs from parsed HTML.")
-        urls = parser.extract_element(element=html, xpath=xpath)
+        urls = Parser.extract_element(element=html, xpath=xpath)
         return urls
 
     def _get_next_page_url(self, html, xpath):
         logging.debug("Looking for next page.")
-        next_page = parser.extract_element(element=html, xpath=xpath)
+        next_page = Parser.extract_element(element=html, xpath=xpath)
 
         if next_page is None:
             logging.warning("No next page URL found")
