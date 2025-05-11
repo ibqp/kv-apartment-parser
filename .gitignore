@@ -1,5 +1,6 @@
-venv/
+venv*/
 logs/
+data/
 __pycache__/
 .ropeproject
 .DS_Store

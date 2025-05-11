@@ -49,16 +49,26 @@ def create_session() -> requests.Session:
 
 def get_initial_url() -> str:
     default_url = f"{BASE_URL}/en/search?deal_type=1"
-    url = input(f"Enter initial URL (default: {default_url}): ").strip()
-    parsed = urlparse(url)
-    return url if (parsed.scheme and parsed.netloc) else default_url
+    user_input = input(f"Enter initial URL (default: {default_url}): ").strip()
+
+    if not user_input:
+        logging.info(f"No input provided. Defaulting to: {default_url}")
+        return default_url
+
+    parsed = urlparse(user_input)
+
+    if parsed.scheme and parsed.netloc.lower().endswith("kv.ee"):
+        return user_input
+
+    logging.info(f"Invalid URL. Defaulting to: {default_url}")
+    return default_url
 
 def generate_url(relative_url: str) -> str:
     url = urljoin(BASE_URL, relative_url)
     logging.debug(f"Generated URL from relative URL: {url}")
     return url
 
-def delay():
+def delay() -> None:
     delay = random.uniform(DELAY_MIN, DELAY_MAX) + random.uniform(0.1, 1.0) # jitter
     logging.debug(f"Sleeping {delay:.2f} seconds.")
     time.sleep(delay)
